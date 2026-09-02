@@ -208,6 +208,10 @@ def normalize(name: str, options: Options = DEFAULT_OPTIONS) -> str:
     if not text:
         text = options.fallback
 
+    # NOTE (2026-09-01): default digit_prefix is "n" ("2020" -> "n2020"). This
+    # was a deliberate but not-final call -- revisit whether "n", "col_", or
+    # keeping the digit (prefix "") is the better default once we have more
+    # real-world headers to test against.
     if _LEADING_DIGIT.match(text):
         text = f"{options.digit_prefix}{text}"
 
