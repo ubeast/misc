@@ -137,4 +137,4 @@ def test_cli_json_output() -> None:
 def test_cli_human_output() -> None:
     out = _run("SCAX").stdout
     assert "base   : SCA" in out
-    assert "railroads" in out
+    assert "railroad" in out

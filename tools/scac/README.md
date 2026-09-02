@@ -8,26 +8,33 @@ it — no install.
 
 ```
 M A E U
-└─┬─┘ └── reserved suffix: U = ocean / container carrier
+└─┬─┘ └── reserved letter: U = freight-container prefix (ISO 6346 / BIC)
   └────── base code
 ```
 
 ## Scope
 
 A SCAC is 2–4 letters identifying a carrier, issued by the
-[NMFTA](https://nmfta.org/scac/). This tool validates the **format** and
-classifies the reserved final letter. It does **not** know which codes have
-actually been issued — for that you need the NMFTA's paid directory.
+[NMFTA](https://nmfta.org/scac/). This tool validates the **format** and reports
+the reserved final letter. It does **not** know which codes have actually been
+issued — for that you need the NMFTA's paid directory.
 
-| final letter | convention |
+Three trailing letters are reserved for identifying **equipment**, not carrier
+type:
+
+| final letter | reserved for |
 | --- | --- |
-| `…U` | freight containers / international ocean carriers |
-| `…X` | railroads and railroad-affiliated companies |
-| `…Z` | trucking companies |
+| `…U` | freight containers (aligned with ISO 6346 / BIC container-owner prefixes) |
+| `…X` | privately owned railroad cars |
+| `…Z` | truck chassis and trailers used in intermodal service |
 
-The suffix counts only when ≥ 2 letters remain in front of it (`MAEU` → `MAE`+`U`;
-`FX` stays `FX`). The convention is widely followed but not strictly enforced,
-so `parse(...).suffix` is reported independently of validity.
+A carrier that owns such equipment often registers a matching SCAC — which is
+why many ocean lines end in `U` (`MAEU` Maersk, `MSCU` MSC). But it's a **loose
+convention**: plenty of container carriers don't end in `U` (`EGLV` Evergreen,
+`ONEY` Ocean Network Express), and a `U`/`X`/`Z` ending doesn't by itself prove
+what a code is for. Treat `parse(...).suffix` as a hint, not a classification.
+The suffix is split only when ≥ 2 letters remain in front (`MAEU` → `MAE`+`U`;
+`FX` stays `FX`).
 
 ## Use as a library
 
@@ -40,7 +47,7 @@ is_valid("TOOLONG")     # False  (never raises)
 
 s = parse("SCAX")               # raises ValueError on a bad shape
 s.code, s.base, s.suffix        # ('SCAX', 'SCA', 'X')
-s.suffix_meaning                # 'railroads and railroad-affiliated companies'
+s.suffix_meaning                # 'privately owned railroad cars'
 s.length                        # 4
 ```
 

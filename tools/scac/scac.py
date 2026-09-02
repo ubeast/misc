@@ -6,20 +6,29 @@ Single file, standard library only. Usable as a CLI or importable as a module.
 A SCAC is a 2-to-4-letter code that uniquely identifies a transportation
 company. Codes are issued and maintained by the NMFTA (National Motor Freight
 Traffic Association); this tool does **not** know which codes have actually been
-issued -- it validates the *shape* of a code and reports the meaning of the
-reserved final letter, if any.
+issued -- it validates the *shape* of a code and reports the reserved final
+letter, if any.
 
-Reserved final letters (NMFTA convention)
------------------------------------------
-    ...U   freight containers / international ocean carriers (also seen as
-           ILU / BIC container-owner prefixes)
-    ...X   railroads and railroad-affiliated companies
-    ...Z   trucking companies
+Reserved final letters
+----------------------
+Three trailing letters are reserved for identifying *equipment*, not carrier
+type (per the SCAC standard, echoed by Wikipedia):
 
-The suffix is only treated as reserved when at least two letters remain in
-front of it, so ``MAEU`` -> base ``MAE`` + ``U``, but ``UPS`` is just ``UPS``.
-The convention is widely followed but not universally enforced, so
-``parse(...).suffix`` is reported separately from validity.
+    ...U   freight containers (aligned with ISO 6346 / BIC container-owner
+           prefixes, which end in U)
+    ...X   privately owned railroad cars
+    ...Z   truck chassis and trailers used in intermodal service
+
+A carrier that owns such equipment often registers a SCAC matching its
+equipment prefix -- which is why many ocean lines' SCACs end in ``U``
+(``MAEU`` Maersk, ``MSCU`` MSC). But the convention is loose: plenty of
+container carriers' SCACs do **not** end in ``U`` (e.g. ``EGLV`` Evergreen,
+``ONEY`` Ocean Network Express), and a ``U``/``X``/``Z`` ending does not by
+itself prove what a code is for. Treat ``parse(...).suffix`` as a hint, not a
+classification.
+
+The suffix is only split off when at least two letters remain in front of it,
+so ``MAEU`` -> base ``MAE`` + ``U``, but ``UPS`` is just ``UPS``.
 
 For developers
 --------------
@@ -31,7 +40,7 @@ For developers
 
     s = parse("SCAX")                   # raises ValueError on bad shape
     s.code, s.base, s.suffix            # ('SCAX', 'SCA', 'X')
-    s.suffix_meaning                    # 'railroads and railroad-affiliated companies'
+    s.suffix_meaning                    # 'privately owned railroad cars'
 
 Sources:
     https://en.wikipedia.org/wiki/Standard_Carrier_Alpha_Code
@@ -53,12 +62,12 @@ __all__ = ["is_valid", "parse", "Scac", "RESERVED_SUFFIXES"]
 MIN_LENGTH = 2
 MAX_LENGTH = 4
 
-# Final letters with an assigned meaning, and the minimum number of letters that
-# must remain in front for the letter to count as a reserved suffix.
+# Final letters reserved for identifying equipment (not carrier type). The
+# suffix is only split off when at least _MIN_BASE_LENGTH letters remain.
 RESERVED_SUFFIXES: dict[str, str] = {
-    "U": "freight containers / international ocean carriers",
-    "X": "railroads and railroad-affiliated companies",
-    "Z": "trucking companies",
+    "U": "freight containers (aligned with ISO 6346 / BIC container-owner prefixes)",
+    "X": "privately owned railroad cars",
+    "Z": "truck chassis and trailers used in intermodal service",
 }
 _MIN_BASE_LENGTH = 2
 
@@ -103,7 +112,7 @@ def parse(raw: str) -> Scac:
     >>> (s.code, s.base, s.suffix)
     ('MAEU', 'MAE', 'U')
     >>> parse("SCAX").suffix_meaning
-    'railroads and railroad-affiliated companies'
+    'privately owned railroad cars'
     >>> parse("UPS").suffix is None
     True
     >>> parse("FX").base            # 2-letter code, nothing to split
