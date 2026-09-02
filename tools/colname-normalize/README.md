@@ -9,7 +9,7 @@ Copy it wherever you need it — no install.
 "Unit Price ($)"   ->  unit_price_usd
 "customerID"       ->  customer_id
 "Ship-To  Country" ->  ship_to_country
-"2020 Revenue"     ->  _2020_revenue
+"2020 Revenue"     ->  n2020_revenue
 "from"             ->  from_
 ["Total", "total"] ->  ["total", "total_2"]
 ```
@@ -23,7 +23,7 @@ Copy it wherever you need it — no install.
 3. Split camelCase / PascalCase / acronym runs (`"HTTPServerError"` → `"HTTP_Server_Error"`).
 4. Every run of non-alphanumerics → a single `_`; collapse, trim, lower-case.
 5. Empty result → `"column"` (configurable).
-6. Leading digit → prefixed with `_` (configurable).
+6. Leading digit → prefixed with `n` (configurable; `--digit-prefix ""` keeps the digit).
 7. Python keyword → trailing `_`; with `avoid_sql_keywords`, common SQL reserved words too.
 8. `max_length` (optional) truncates.
 

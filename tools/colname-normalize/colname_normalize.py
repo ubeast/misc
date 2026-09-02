@@ -22,7 +22,8 @@ What ``normalize`` does, in order
 4.  Replace every run of non-alphanumeric characters with a single ``_``.
 5.  Collapse repeated ``_``, strip leading/trailing ``_``, lower-case.
 6.  An empty result becomes ``fallback`` (default ``"column"``).
-7.  A name starting with a digit gets ``digit_prefix`` (default ``"_"``).
+7.  A name starting with a digit gets ``digit_prefix`` (default ``"n"``), since
+    a bare identifier cannot start with a digit. Set it to ``""`` to opt out.
 8.  A name that is a Python keyword gets a trailing ``_``; with
     ``avoid_sql_keywords`` a common-SQL reserved word does too.
 9.  With ``max_length`` > 0 the name is truncated to that many characters.
@@ -69,7 +70,7 @@ __all__ = [
 # --- constants (nothing magic buried in the code below) --------------------- #
 
 DEFAULT_FALLBACK = "column"
-DEFAULT_DIGIT_PREFIX = "_"
+DEFAULT_DIGIT_PREFIX = "n"
 
 # Symbols mapped to words in step 2. Applied as surrounded-by-spaces text
 # substitution so "100%" becomes "100 pct " -> "100_pct".
@@ -180,7 +181,7 @@ def normalize(name: str, options: Options = DEFAULT_OPTIONS) -> str:
     >>> normalize("  Ship-To  Country  ")
     'ship_to_country'
     >>> normalize("2020 Revenue")
-    '_2020_revenue'
+    'n2020_revenue'
     >>> normalize("from")
     'from_'
     >>> normalize("---")
@@ -321,7 +322,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--keep-case", action="store_true", help="do not lower-case (keep UPPER_SNAKE)")
     parser.add_argument("--sql-reserved", action="store_true", help="also append _ to common SQL reserved words")
     parser.add_argument("--max-length", type=int, default=0, metavar="N", help="truncate names to N characters (0 = no limit)")
-    parser.add_argument("--digit-prefix", default=DEFAULT_DIGIT_PREFIX, metavar="STR", help="prefix for names starting with a digit (default '_')")
+    parser.add_argument("--digit-prefix", default=DEFAULT_DIGIT_PREFIX, metavar="STR", help="prefix for names starting with a digit (default 'n'; '' to keep the digit)")
     parser.add_argument("--selftest", action="store_true", help="run the built-in doctests and assertions and exit")
     args = parser.parse_args(argv)
 
@@ -364,7 +365,8 @@ def _selftest() -> int:
     assert normalize("HTTPServerError") == "http_server_error"
     assert normalize("v2Model") == "v2_model"
     assert normalize("  notes  ") == "notes"
-    assert normalize("2020") == "_2020"
+    assert normalize("2020") == "n2020"
+    assert normalize("2020", Options(digit_prefix="")) == "2020"
     assert normalize("class") == "class_"
     assert normalize("select", Options(avoid_sql_keywords=True)) == "select_"
     assert normalize("select") == "select"  # not a Python keyword

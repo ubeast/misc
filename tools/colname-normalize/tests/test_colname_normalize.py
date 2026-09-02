@@ -32,7 +32,7 @@ SCRIPT = Path(__file__).resolve().parent.parent / "colname_normalize.py"
         ("HTTPServerError", "http_server_error"),
         ("userId", "user_id"),
         ("v2Model", "v2_model"),
-        ("2020 Revenue", "_2020_revenue"),
+        ("2020 Revenue", "n2020_revenue"),
         ("Ünit Prïce", "unit_price"),
         ("Total (USD)", "total_usd"),
         ("weight / kg", "weight_kg"),
@@ -72,7 +72,8 @@ def test_sql_reserved_is_opt_in() -> None:
 
 def test_options_toggle_behaviour() -> None:
     assert cn.normalize("customerID", cn.Options(split_camel_case=False)) == "customerid"
-    assert cn.normalize("50%", cn.Options(replace_symbols=False)) == "_50"
+    assert cn.normalize("50%", cn.Options(replace_symbols=False)) == "n50"
+    assert cn.normalize("2020", cn.Options(digit_prefix="")) == "2020"
     assert cn.normalize("CustomerID", cn.Options(lower=False)) == "Customer_ID"
     assert cn.normalize("2020", cn.Options(digit_prefix="col_")) == "col_2020"
 
