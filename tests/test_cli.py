@@ -32,7 +32,7 @@ def test_scan_directory_parses_rows(tmp_path: Path) -> None:
     assert row["Transaction_Set"] == "511"
 
 
-def test_main_writes_csv(tmp_path: Path, capsys) -> None:
+def test_main_writes_csv(tmp_path: Path) -> None:
     _touch(tmp_path, "004010M511_3_MA05.pdf")
     out = tmp_path / "out.csv"
     rc = main([str(tmp_path), "-o", str(out)])

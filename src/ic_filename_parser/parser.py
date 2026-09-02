@@ -12,10 +12,17 @@ Three filename families are recognised, tried in this order:
 
 Known limitation: the DLMS pattern's ``<txn set>`` is exactly three digits.
 A filename whose transaction-set segment is written with a leading digit that
-is really part of the generation number (``...M0511...``) will mis-split. If
-you hit that, capture real examples and tighten the pattern -- do not widen
-``\\d{3}`` blindly. Whatever the pattern could not consume is preserved in
-``Unparsed_Trailing`` so these cases are visible instead of silently dropped.
+is really part of the generation number (``...M0511...``) will mis-split, or
+fail the DLMS pattern outright. If you hit that, capture real examples and
+tighten the pattern -- do not widen ``\\d{3}`` blindly.
+
+Visibility of unparsed text works two ways:
+
+* A *partial* DLMS/DTEB match keeps whatever followed the recognised segments
+  in ``Unparsed_Trailing``.
+* A filename that is clearly IC-shaped (``<4-6 digits><letter><3 digits>...``)
+  but that no pattern could match at all still lands in ``Unparsed_Trailing``
+  via the fallback, rather than being silently filed as "Non-Standard".
 """
 
 from __future__ import annotations
@@ -41,11 +48,18 @@ DLMS_PATTERN = re.compile(
     r"_?(?:(?P<track>[A-Za-z]))?"
     r"(?P<state>[A-Za-z])"
     r"(?P<rev_num>\d{2})"
-    r"(?:_(?P<pub_date>[A-Za-z0-9]+))?"
-    r"(?:_ADC[_\s]*(?P<adc_num>\w+))?"
+    # The negative lookahead keeps an ``_ADC_1234`` / ``_ADC1234`` segment that
+    # has no preceding date from being swallowed here as a bogus date token.
+    r"(?:_(?P<pub_date>(?!ADC(?:[_\s]|\d))[A-Za-z0-9]+))?"
+    r"(?:_ADC[_\s]*(?P<adc_num>[A-Za-z0-9]+))?"
     r"(?P<trailing>.*)$",
     re.IGNORECASE,
 )
+
+# A filename that looks like an IC (version + format letter + 3-digit txn set)
+# but that :data:`DLMS_PATTERN` could not fully consume. Used only to route the
+# leftover text into ``Unparsed_Trailing`` instead of losing it to the fallback.
+_IC_SHAPED_RE = re.compile(r"^\d{4,6}[A-Za-z]\d{3}.+$", re.IGNORECASE)
 
 DTEB_PATTERN = re.compile(
     r"^(?P<dteb_ver>\d{2})"
@@ -128,7 +142,7 @@ def _build_dlms(file_name: str, cleaned_base: str, match: re.Match[str]) -> ICRe
     return ICRecord(
         FileName=file_name,
         IC_Identifier=cleaned_base.split("_")[0],
-        X12_Version=data["x12_ver"].strip().zfill(6),
+        X12_Version=data["x12_ver"].zfill(6),
         Format=data["format_type"].upper(),
         Transaction_Set=trans_set,
         DLMS_Suffix=data["dlms_suffix"] or "",
@@ -177,6 +191,10 @@ def _build_dteb(file_name: str, cleaned_base: str, match: re.Match[str]) -> ICRe
 
 
 def _build_fallback(file_name: str, cleaned_base: str) -> ICRecord:
+    # If the name is IC-shaped but no pattern matched (e.g. the ``...M0511...``
+    # glued-digit case), surface the whole base in Unparsed_Trailing so it is
+    # reviewable rather than quietly filed as a non-standard convention.
+    ic_shaped = _IC_SHAPED_RE.match(cleaned_base) is not None
     return ICRecord(
         FileName=file_name,
         IC_Identifier=cleaned_base,
@@ -195,5 +213,5 @@ def _build_fallback(file_name: str, cleaned_base: str) -> ICRecord:
         Publication_Date_Precision="",
         ADC_Reference="",
         Track_Inferred=False,
-        Unparsed_Trailing="",
+        Unparsed_Trailing=cleaned_base if ic_shaped else "",
     )

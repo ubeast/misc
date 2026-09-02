@@ -49,8 +49,18 @@ def test_implausible_four_digits_read_as_ddyy() -> None:
 
 @pytest.mark.parametrize(
     "raw",
-    [None, "", "N/A", "None", "nan", "NaT", "-", "garbage", "Foo2024", "20221345"],
+    [
+        None, "", "N/A", "None", "nan", "NaT", "-", "garbage", "Foo2024", "20221345",
+        "Aug159999",  # 4-digit run outside the plausible-year window -> not a date
+        "Aug150001",
+    ],
 )
 def test_rejects(raw: str | None) -> None:
     assert parse_ebso_date(raw) is None
     assert format_ebso_date(raw) == ""
+
+
+def test_month_day_year4_respects_plausible_year_window() -> None:
+    # Inside the window it is a full date; outside, pattern 3 must not fire.
+    assert parse_ebso_date("Aug152099") is not None
+    assert parse_ebso_date("Aug152100") is None

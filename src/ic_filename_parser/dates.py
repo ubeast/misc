@@ -15,10 +15,11 @@ Design notes for a follow-on developer:
   where ``Aug2024`` was read as "the 20th of August, 2024" because a
   greedy ``\\d{1,2}`` day group happily ate the first two digits of the
   year.
-* A bare 4-digit run is treated as a *year* only when it falls inside
-  :data:`_MIN_FULL_YEAR` .. :data:`_MAX_FULL_YEAR`; otherwise it is read as
-  ``DDYY``. Widen that window if the corpus ever grows to include 1900s or
-  2100s publication dates.
+* A 4-digit run is treated as a *year* only when it falls inside
+  :data:`_MIN_FULL_YEAR` .. :data:`_MAX_FULL_YEAR` (patterns 3 and 4);
+  otherwise the "month + day + 2-digit year" shape (pattern 5) reads the
+  last two digits as ``YY``. Widen that window if the corpus ever grows to
+  include 1900s or 2100s publication dates.
 """
 
 from __future__ import annotations
@@ -127,12 +128,14 @@ def parse_ebso_date(raw: str | None) -> ParsedDate | None:
 
     # 3. <Month><day><4-digit year>, e.g. "Aug152024". A bare month + year
     #    cannot reach here: the day group needs >= 1 digit that a 4-digit
-    #    year would otherwise require.
+    #    year would otherwise require. The 4-digit run is only accepted as a
+    #    year inside the plausible-publication-year window, same as pattern 4.
     m = _MONTH_DAY_YEAR4_RE.match(token)
     if m:
         mon = _month_number(m["month"])
-        if mon:
-            d = _safe_date(int(m["year"]), mon, int(m["day"]))
+        year = int(m["year"])
+        if mon and _MIN_FULL_YEAR <= year <= _MAX_FULL_YEAR:
+            d = _safe_date(year, mon, int(m["day"]))
             if d:
                 return ParsedDate(d, DatePrecision.DAY)
 

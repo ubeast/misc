@@ -32,6 +32,14 @@ rec = parse_filename("004010M511_3_MA05_20220803_ADC_1234.pdf")
 df = scan_directory(Path("./downloads"))
 ```
 
+## Single-file version
+
+`scripts/ic_filename_parser.py` is the whole thing merged into one standard-
+library-only file (no pandas) — copy/paste it into a Python session or drop it
+on a bare machine and run `python ic_filename_parser.py ./downloads`. Same
+parsing behaviour and same columns as the package; CSV is emitted via the
+`csv` module and `--clipboard` shells out to `pbcopy`/`clip`/`xclip`.
+
 ## Output columns
 
 Same as the original script plus three new columns:
@@ -60,9 +68,11 @@ Same as the original script plus three new columns:
 
 The DLMS pattern's transaction-set segment is exactly three digits. Filenames
 where the generation digit is glued to the transaction set (`...M0511...`) can
-mis-split. Real examples plus a fixture test are the right way to tighten the
-pattern — don't widen `\d{3}` blindly. Anything unconsumed lands in
-`Unparsed_Trailing`.
+mis-split, or fail the pattern entirely. Real examples plus a fixture test are
+the right way to tighten the pattern — don't widen `\d{3}` blindly. Such a
+filename still shows up: an IC-shaped name (`<4-6 digits><letter><3 digits>…`)
+that no pattern matches gets its full base echoed into `Unparsed_Trailing`
+instead of being filed silently as "Non-Standard EDI Convention".
 
 ## Test
 

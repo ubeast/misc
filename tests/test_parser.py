@@ -33,6 +33,23 @@ def test_dlms_with_iso_date_and_adc() -> None:
     assert r.ADC_Reference == "ADC_1234"
 
 
+def test_dlms_adc_without_publication_date() -> None:
+    # Regression: the pub_date group used to swallow "ADC", losing the
+    # reference and dumping the number into Unparsed_Trailing.
+    r = parse_filename("004010M511_3_MA05_ADC_1234.pdf")
+    assert r.ADC_Reference == "ADC_1234"
+    assert r.Publication_Date == ""
+    assert r.Unparsed_Trailing == ""
+
+
+def test_dlms_suffix_parsed() -> None:
+    r = parse_filename("004010M511_INV_3_MA05.pdf")
+    assert r.DLMS_Suffix == "INV"
+    assert r.Major_Gen == "3"
+    assert r.Track == "M"
+    assert r.Unparsed_Trailing == ""
+
+
 def test_dlms_997_infers_functional_ack_track() -> None:
     r = parse_filename("004010F997_1_A01.pdf")
     assert r.Track == "F"
@@ -65,6 +82,16 @@ def test_fallback_non_standard() -> None:
     assert r.Track_Description == "Non-Standard EDI Convention"
     assert r.X12_Version == ""
     assert r.Format == ""
+    assert r.Unparsed_Trailing == ""
+
+
+def test_ic_shaped_but_unparsable_is_flagged() -> None:
+    # The documented "generation digit glued to the transaction set" case:
+    # no pattern matches, but the name is clearly IC-shaped, so the base is
+    # echoed into Unparsed_Trailing rather than filed silently as non-standard.
+    r = parse_filename("004010M0511_3_MA05.pdf")
+    assert r.Track_Description == "Non-Standard EDI Convention"
+    assert r.Unparsed_Trailing == "004010M0511_3_MA05"
 
 
 def test_duplicate_download_suffix_stripped() -> None:
