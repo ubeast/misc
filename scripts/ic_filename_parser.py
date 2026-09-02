@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Parse EBSO / DLMS / DTEB Interface Change (IC) PDF filenames into a table.
 
-Single-file, standard-library-only version of the ``ic_filename_parser`` package
--- meant to be copied and pasted into a Python session (or dropped onto a
-machine with nothing installed) and run as-is.
+Single file, standard library only -- meant to be copied and pasted into a
+Python session (or dropped onto a machine with nothing installed) and run
+as-is. This is the whole implementation; there is no package.
 
     # CSV for every *.pdf in ./downloads, to stdout
     python ic_filename_parser.py ./downloads
@@ -11,10 +11,11 @@ machine with nothing installed) and run as-is.
     # to a file, and also onto the clipboard
     python ic_filename_parser.py ./downloads -o ics.csv --clipboard
 
-    # as a library
-    from ic_filename_parser import parse_filename, scan_directory
+    # as a library (put this file on sys.path, then import it by name)
+    from ic_filename_parser import parse_filename, scan_directory, rows_to_csv
     rec = parse_filename("004010M511_3_MA05_20220803_ADC_1234.pdf")
     rows = scan_directory(Path("./downloads"))          # list[ICRecord]
+    print(rows_to_csv(rows))
 
 Three filename families are recognised, tried in this order:
 

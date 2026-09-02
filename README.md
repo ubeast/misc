@@ -1,44 +1,35 @@
 # ic-filename-parser
 
-Parse EBSO / DLMS / DTEB **Interface Change (IC)** PDF filenames into a structured
-table. Rewrite of a one-file script; same parsing intent, with the date bug and
-the DTEB crash fixed.
+Parse EBSO / DLMS / DTEB **Interface Change (IC)** PDF filenames into a table.
+Rewrite of a one-file script; same parsing intent, with the date bug and the
+DTEB crash fixed.
 
-## Install
-
-```bash
-uv sync --extra dev      # dev deps (pytest)
-# or, just the runtime:
-uv pip install -e .
-```
+It is still one file: [`scripts/ic_filename_parser.py`](scripts/ic_filename_parser.py),
+standard library only (no pandas). Copy it wherever you need it — no install.
 
 ## Use
 
 ```bash
 # CSV to stdout for the PDFs in ./downloads
-uv run ic-filename-parser ./downloads
+python scripts/ic_filename_parser.py ./downloads
 
 # to a file, and also onto the clipboard
-uv run ic-filename-parser ./downloads -o ics.csv --clipboard
+python scripts/ic_filename_parser.py ./downloads -o ics.csv --clipboard
 ```
 
-Library:
+`--clipboard` shells out to `pbcopy` (macOS) / `clip` (Windows) /
+`xclip` or `xsel` (Linux), and warns to stderr if none is found.
+
+As a library (put the file on `sys.path`, then import it by name):
 
 ```python
-from ic_filename_parser import parse_filename
-from ic_filename_parser.cli import scan_directory
+from pathlib import Path
+from ic_filename_parser import parse_filename, scan_directory, rows_to_csv
 
 rec = parse_filename("004010M511_3_MA05_20220803_ADC_1234.pdf")
-df = scan_directory(Path("./downloads"))
+rows = scan_directory(Path("./downloads"))   # list[ICRecord]
+print(rows_to_csv(rows))
 ```
-
-## Single-file version
-
-`scripts/ic_filename_parser.py` is the whole thing merged into one standard-
-library-only file (no pandas) — copy/paste it into a Python session or drop it
-on a bare machine and run `python ic_filename_parser.py ./downloads`. Same
-parsing behaviour and same columns as the package; CSV is emitted via the
-`csv` module and `--clipboard` shells out to `pbcopy`/`clip`/`xclip`.
 
 ## Output columns
 
@@ -53,15 +44,18 @@ Same as the original script plus three new columns:
 ## What changed vs. the original script
 
 - **`Aug2024`-style dates fixed.** The old greedy day pattern read `Aug2024` as
-  *the 20th of August* and made the `MonthYYYY` branch dead code. Patterns are
-  now tried most-specific-first; see `dates.py` for the full order and the
-  plausible-year window (`2000`–`2099`).
+  *the 20th of August* and made the `MonthYYYY` branch dead code. Date shapes
+  are now tried most-specific-first; see the `parse_ebso_date` comments for the
+  full order and the plausible-year window (`2000`–`2099`, applied to every
+  4-digit-year shape).
 - **DTEB filenames without a release no longer crash** (`None.upper()` →
   `AttributeError`), e.g. `41D856.pdf`.
 - **Unknown track codes report `"Unknown"`**, not `"Functional Acknowledgement"`.
-- **Empty directory yields a DataFrame with the full column set**, not a
-  columnless frame.
-- No import-time side effects; `pathlib` throughout; type hints; `src/` layout;
+- **`_ADC_<n>` with no preceding publication date** keeps its reference instead
+  of the date group swallowing `ADC`.
+- **Empty directory still yields the full column header** (`rows_to_csv([])`),
+  not a headerless output.
+- No import-time side effects; `pathlib` throughout; type hints;
   case-insensitive `*.pdf` / `*.PDF` matching.
 
 ## Known limitation
@@ -76,6 +70,9 @@ instead of being filed silently as "Non-Standard EDI Convention".
 
 ## Test
 
+The suite (`tests/`) runs against the script via `tests/conftest.py`, which
+puts `scripts/` on the path.
+
 ```bash
-uv run pytest
+uv run pytest        # or: pip install pytest && pytest
 ```

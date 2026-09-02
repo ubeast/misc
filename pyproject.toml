@@ -1,23 +1,20 @@
+# This project is a single script: scripts/ic_filename_parser.py (stdlib only).
+# There is no installable package and no runtime dependencies -- pyproject.toml
+# exists only to pin the test tooling and configure pytest.
+
 [project]
 name = "ic-filename-parser"
-version = "0.1.0"
-description = "Parse EBSO/DLMS/DTEB Interface Change (IC) PDF filenames into a structured table."
+version = "0.2.0"
+description = "Parse EBSO/DLMS/DTEB Interface Change (IC) PDF filenames into a table."
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = ["pandas>=2.0"]
+dependencies = []
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = ["pytest>=8.0"]
 
-[project.scripts]
-ic-filename-parser = "ic_filename_parser.cli:main"
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/ic_filename_parser"]
+[tool.uv]
+package = false
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,10 +1,10 @@
-"""Tests for :mod:`ic_filename_parser.dates`."""
+"""Tests for the date parsing in ``ic_filename_parser``."""
 
 from __future__ import annotations
 
 import pytest
 
-from ic_filename_parser.dates import (
+from ic_filename_parser import (
     DatePrecision,
     format_ebso_date,
     parse_ebso_date,

@@ -1,11 +1,18 @@
-"""Tests for :mod:`ic_filename_parser.cli`."""
+"""Tests for the directory scan and CSV/CLI helpers in ``ic_filename_parser``."""
 
 from __future__ import annotations
 
+import csv
+import io
 from pathlib import Path
 
-from ic_filename_parser.cli import iter_pdf_files, main, scan_directory
-from ic_filename_parser.parser import COLUMNS
+from ic_filename_parser import (
+    COLUMNS,
+    iter_pdf_files,
+    main,
+    rows_to_csv,
+    scan_directory,
+)
 
 
 def _touch(directory: Path, *names: str) -> None:
@@ -18,18 +25,18 @@ def test_iter_pdf_files_case_insensitive_and_sorted(tmp_path: Path) -> None:
     assert [p.name for p in iter_pdf_files(tmp_path)] == ["a.pdf", "b.PDF"]
 
 
-def test_scan_directory_empty_keeps_schema(tmp_path: Path) -> None:
-    df = scan_directory(tmp_path)
-    assert list(df.columns) == COLUMNS
-    assert len(df) == 0
-
-
-def test_scan_directory_parses_rows(tmp_path: Path) -> None:
+def test_scan_directory_returns_records(tmp_path: Path) -> None:
     _touch(tmp_path, "004010M511_3_MA05.pdf", "random_document.pdf")
-    df = scan_directory(tmp_path)
-    assert len(df) == 2
-    row = df.loc[df["FileName"] == "004010M511_3_MA05.pdf"].iloc[0]
-    assert row["Transaction_Set"] == "511"
+    rows = scan_directory(tmp_path)
+    assert len(rows) == 2
+    by_name = {r.FileName: r for r in rows}
+    assert by_name["004010M511_3_MA05.pdf"].Transaction_Set == "511"
+
+
+def test_rows_to_csv_empty_keeps_schema(tmp_path: Path) -> None:
+    reader = csv.reader(io.StringIO(rows_to_csv(scan_directory(tmp_path))))
+    assert next(reader) == COLUMNS
+    assert next(reader, None) is None
 
 
 def test_main_writes_csv(tmp_path: Path) -> None:
@@ -37,6 +44,6 @@ def test_main_writes_csv(tmp_path: Path) -> None:
     out = tmp_path / "out.csv"
     rc = main([str(tmp_path), "-o", str(out)])
     assert rc == 0
-    text = out.read_text()
-    assert text.splitlines()[0] == ",".join(COLUMNS)
-    assert "004010M511_3_MA05.pdf" in text
+    lines = out.read_text().splitlines()
+    assert lines[0] == ",".join(COLUMNS)
+    assert any("004010M511_3_MA05.pdf" in line for line in lines[1:])

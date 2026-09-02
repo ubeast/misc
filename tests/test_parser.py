@@ -1,8 +1,8 @@
-"""Tests for :mod:`ic_filename_parser.parser`."""
+"""Tests for the filename parser in ``ic_filename_parser``."""
 
 from __future__ import annotations
 
-from ic_filename_parser.parser import COLUMNS, parse_filename
+from ic_filename_parser import COLUMNS, parse_filename
 
 
 def test_dlms_basic() -> None:
