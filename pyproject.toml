@@ -1,11 +1,12 @@
-# This project is a single script: scripts/ic_filename_parser.py (stdlib only).
-# There is no installable package and no runtime dependencies -- pyproject.toml
-# exists only to pin the test tooling and configure pytest.
+# A grab-bag of independent single-file tools, one per directory under tools/.
+# Nothing is installable and there are no runtime dependencies -- each tool is a
+# standalone .py file. pyproject.toml exists only to pin the test tooling and
+# configure pytest across every tool's tests/ directory.
 
 [project]
-name = "ic-filename-parser"
-version = "0.2.0"
-description = "Parse EBSO/DLMS/DTEB Interface Change (IC) PDF filenames into a table."
+name = "misc-tools"
+version = "0.1.0"
+description = "Independent single-file tools (see README.md for the index)."
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = []
@@ -17,4 +18,4 @@ dev = ["pytest>=8.0"]
 package = false
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["tools"]
