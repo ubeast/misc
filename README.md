@@ -15,10 +15,12 @@ copy the one `.py` file wherever you need it.
 | [`tools/nb-extract`](tools/nb-extract/) | Pull selected cells (by language / tag / regex) out of Jupyter or Databricks notebooks | yes |
 | [`tools/nb-secrets`](tools/nb-secrets/) | Scan notebooks and scripts (cell source *and* outputs) for hard-coded secrets | yes |
 | [`tools/to-markdown`](tools/to-markdown/) | Print a `pandas` DataFrame as a Markdown table | no (`pandas`) |
+| [`tools/dbricks-folder-archiver`](tools/dbricks-folder-archiver/) | Databricks notebook: archive the workspace folder it runs from to a new private GitLab project | no (`requests`; Databricks notebook) |
 
 ## Tests
 
-`pyproject.toml` exists only to pin `pytest` and point it at `tools/`. From the
+`pyproject.toml` exists only to pin the test tooling (`pytest`, plus `requests`
+for the one tool whose tests need it) and point pytest at `tools/`. From the
 repo root:
 
 ```bash
