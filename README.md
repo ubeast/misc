@@ -12,6 +12,7 @@ copy the one `.py` file wherever you need it.
 | [`tools/scac`](tools/scac/) | Validate SCAC (Standard Carrier Alpha Code) format and classify its reserved suffix | yes |
 | [`tools/colname-normalize`](tools/colname-normalize/) | Turn messy column headers into safe, unique `snake_case` identifiers | yes |
 | [`tools/imports-scan`](tools/imports-scan/) | Scan `.py` / `.ipynb` files for imports and emit a dependency list | yes |
+| [`tools/repo-inventory`](tools/repo-inventory/) | List every GitHub / GitLab repo you can see as one Markdown / CSV / JSON table | yes |
 | [`tools/nb-extract`](tools/nb-extract/) | Pull selected cells (by language / tag / regex) out of Jupyter or Databricks notebooks | yes |
 | [`tools/nb-secrets`](tools/nb-secrets/) | Scan notebooks and scripts (cell source *and* outputs) for hard-coded secrets | yes |
 | [`tools/to-markdown`](tools/to-markdown/) | Print a `pandas` DataFrame as a Markdown table | no (`pandas`) |
