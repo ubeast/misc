@@ -23,6 +23,19 @@ In the Markdown / CSV table: booleans render `yes` / `no`, a **`?`** means the
 value is unknown (see `--full`), and a blank cell means known-to-be-empty. JSON
 keeps real types and uses `null` for unknown.
 
+### `forks` vs `is_fork` — opposite directions
+
+- **`forks`** is `forks_count`: how many *other* people forked **this** repo. It's
+  an inbound popularity signal, alongside `stars` and `watchers`. Sort by it
+  (`--sort` doesn't cover it, but the CSV/JSON does) to see what's getting picked
+  up.
+- **`is_fork`** is `true` when **you** created this repo by forking someone
+  else's. It says nothing about the repo's popularity — a fork you never touched
+  still shows `is_fork: yes` with `forks: 0`.
+
+`--exclude-forks` filters on `is_fork`, i.e. it drops the repos *you* forked, not
+the ones others forked from you.
+
 ## Targets
 
 | flag | what it lists | token |
