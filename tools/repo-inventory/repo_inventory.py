@@ -109,7 +109,7 @@ __all__ = [
 
 GITHUB_API = "https://api.github.com"
 GITLAB_DEFAULT_URL = "https://gitlab.com"
-USER_AGENT = "repo-inventory/1.0 (+https://github.com/ubeast/misc)"
+USER_AGENT = "repo-inventory/1.0 (+https://github.com/ubeast/one-file-tools)"
 
 # Column order for the Markdown / CSV table. JSON keeps the dataclass field
 # order (same list). Keep this in sync with RepoRecord's fields.

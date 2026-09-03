@@ -9,7 +9,7 @@
 #   - requests: dbricks-folder-archiver (pre-installed on Databricks Runtime)
 
 [project]
-name = "misc-tools"
+name = "one-file-tools"
 version = "0.1.0"
 description = "Independent single-file tools (see README.md for the index)."
 readme = "README.md"

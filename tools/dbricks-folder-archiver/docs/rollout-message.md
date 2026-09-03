@@ -12,7 +12,7 @@ Team,
 New Databricks -> GitLab archive tool is ready to replace the previous one.
 **Don't switch over yet** — I need the group to test it first.
 
-**Repo + instructions:** https://github.com/ubeast/misc — `tools/dbricks-folder-archiver/`
+**Repo + instructions:** https://github.com/ubeast/one-file-tools — `tools/dbricks-folder-archiver/`
 
 **Setup:** GitLab PAT (`api` + `write_repository`) stored as a Databricks
 secret; set `GITLAB_SECRET_SCOPE` / `GITLAB_SECRET_KEY` in the file. `[secret details]`

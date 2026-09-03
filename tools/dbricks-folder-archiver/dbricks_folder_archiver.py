@@ -83,7 +83,7 @@ EXT_BY_LANGUAGE = {"PYTHON": ".py", "SQL": ".sql", "SCALA": ".scala", "R": ".r"}
 # constant - the tool's git history is the version record, and each archive is
 # stamped with its run timestamp.
 TOOL_NAME = "dbricks_folder_archiver"
-TOOL_LOCATION = "the ubeast/misc repo, tools/dbricks-folder-archiver/"
+TOOL_LOCATION = "the ubeast/one-file-tools repo, tools/dbricks-folder-archiver/"
 
 NOTES_FILENAME = "ARCHIVE_NOTES.md"
 GITKEEP_FILENAME = ".gitkeep"

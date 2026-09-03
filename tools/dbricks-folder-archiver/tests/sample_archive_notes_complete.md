@@ -1,6 +1,6 @@
 # Archive notes
 
-This GitLab project is a point-in-time copy of a Databricks workspace folder, made by the `dbricks_folder_archiver` tool (the ubeast/misc repo, tools/dbricks-folder-archiver/). The original workspace folder was not changed.
+This GitLab project is a point-in-time copy of a Databricks workspace folder, made by the `dbricks_folder_archiver` tool (the ubeast/one-file-tools repo, tools/dbricks-folder-archiver/). The original workspace folder was not changed.
 
 ## Status: COMPLETE
 
