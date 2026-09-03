@@ -1,7 +1,12 @@
 # A grab-bag of independent single-file tools, one per directory under tools/.
-# Nothing is installable and there are no runtime dependencies -- each tool is a
-# standalone .py file. pyproject.toml exists only to pin the test tooling and
-# configure pytest across every tool's tests/ directory.
+# Nothing is installable -- each tool is a standalone .py file. pyproject.toml
+# exists only to pin the test tooling and configure pytest across every tool's
+# tests/ directory.
+#
+# Almost every tool is standard-library only. The exceptions are noted in the
+# README table; where such a tool also has a test suite, its third-party imports
+# are pinned in the dev group below so `uv run pytest` has them:
+#   - requests: dbricks-folder-archiver (pre-installed on Databricks Runtime)
 
 [project]
 name = "misc-tools"
@@ -12,7 +17,7 @@ requires-python = ">=3.10"
 dependencies = []
 
 [dependency-groups]
-dev = ["pytest>=8.0"]
+dev = ["pytest>=8.0", "requests>=2.32"]
 
 [tool.uv]
 package = false
