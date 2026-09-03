@@ -1,4 +1,4 @@
-# misc
+# one-file-tools
 
 A grab-bag of independent single-file tools. Each lives in its own directory
 under [`tools/`](tools/) with its own README and tests. Nothing is installable;
