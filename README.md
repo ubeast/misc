@@ -6,17 +6,17 @@ copy the one `.py` file wherever you need it.
 
 | tool | what it does | stdlib only |
 | --- | --- | --- |
-| [`iso6346`](tools/iso6346/) | Validate ISO 6346 shipping-container numbers and calculate the check digit | yes |
-| [`ic-filename-parser`](tools/ic-filename-parser/) | Parse EBSO / DLMS / DTEB Interface Change (IC) PDF filenames into a table | yes |
-| [`unlocode`](tools/unlocode/) | Validate UN/LOCODE format and split into country + location code | yes |
-| [`scac`](tools/scac/) | Validate SCAC (Standard Carrier Alpha Code) format and classify its reserved suffix | yes |
 | [`colname-normalize`](tools/colname-normalize/) | Turn messy column headers into safe, unique `snake_case` identifiers | yes |
+| [`dbricks-folder-archiver`](tools/dbricks-folder-archiver/) | Databricks notebook: archive the workspace folder it runs from to a new private GitLab project | no (`requests`; Databricks notebook) |
+| [`ic-filename-parser`](tools/ic-filename-parser/) | Parse EBSO / DLMS / DTEB Interface Change (IC) PDF filenames into a table | yes |
 | [`imports-scan`](tools/imports-scan/) | Scan `.py` / `.ipynb` files for imports and emit a dependency list | yes |
-| [`repo-inventory`](tools/repo-inventory/) | List every GitHub / GitLab repo you can see as one Markdown / CSV / JSON table | yes |
+| [`iso6346`](tools/iso6346/) | Validate ISO 6346 shipping-container numbers and calculate the check digit | yes |
 | [`nb-extract`](tools/nb-extract/) | Pull selected cells (by language / tag / regex) out of Jupyter or Databricks notebooks | yes |
 | [`nb-secrets`](tools/nb-secrets/) | Scan notebooks and scripts (cell source *and* outputs) for hard-coded secrets | yes |
+| [`repo-inventory`](tools/repo-inventory/) | List every GitHub / GitLab repo you can see as one Markdown / CSV / JSON table | yes |
+| [`scac`](tools/scac/) | Validate SCAC (Standard Carrier Alpha Code) format and classify its reserved suffix | yes |
 | [`to-markdown`](tools/to-markdown/) | Print a `pandas` DataFrame as a Markdown table | no (`pandas`) |
-| [`dbricks-folder-archiver`](tools/dbricks-folder-archiver/) | Databricks notebook: archive the workspace folder it runs from to a new private GitLab project | no (`requests`; Databricks notebook) |
+| [`unlocode`](tools/unlocode/) | Validate UN/LOCODE format and split into country + location code | yes |
 
 ## Tests
 
