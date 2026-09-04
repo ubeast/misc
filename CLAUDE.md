@@ -58,5 +58,5 @@ own assertions and doctests.
 1. `tools/<name>/<name>.py` — single file, stdlib-only if at all possible.
 2. `tools/<name>/README.md` and `tools/<name>/tests/` (copy `conftest.py` from a
    sibling and change the name).
-3. Add a row to the table in the top-level `README.md`.
+3. Add a row to the table in the top-level `README.md` (kept alphabetical by tool name).
 4. `uv run pytest tools/<name>` green, then open the PR.
