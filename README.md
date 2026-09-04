@@ -8,6 +8,7 @@ copy the one `.py` file wherever you need it.
 | --- | --- | --- |
 | [`colname-normalize`](tools/colname-normalize/) | Turn messy column headers into safe, unique `snake_case` identifiers | yes |
 | [`dbricks-folder-archiver`](tools/dbricks-folder-archiver/) | Databricks notebook: archive the workspace folder it runs from to a new private GitLab project | no (`requests`; Databricks notebook) |
+| [`empty-sweep`](tools/empty-sweep/) | Find (and optionally delete) empty files, including empty Jupyter/Databricks notebooks | yes |
 | [`ic-filename-parser`](tools/ic-filename-parser/) | Parse EBSO / DLMS / DTEB Interface Change (IC) PDF filenames into a table | yes |
 | [`imports-scan`](tools/imports-scan/) | Scan `.py` / `.ipynb` files for imports and emit a dependency list | yes |
 | [`iso6346`](tools/iso6346/) | Validate ISO 6346 shipping-container numbers and calculate the check digit | yes |
